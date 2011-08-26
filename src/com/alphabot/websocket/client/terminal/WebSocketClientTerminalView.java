@@ -4,6 +4,8 @@
 
 package com.alphabot.websocket.client.terminal;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -15,6 +17,15 @@ import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+
+// Refactor to other class
+import de.roderick.weberknecht.WebSocket;
+import de.roderick.weberknecht.WebSocketConnection;
+import de.roderick.weberknecht.WebSocketEventHandler;
+import de.roderick.weberknecht.WebSocketException;
+import de.roderick.weberknecht.WebSocketMessage;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * The application's main frame.
@@ -135,12 +146,15 @@ public class WebSocketClientTerminalView extends FrameView {
         logArea.setName("logArea"); // NOI18N
         jScrollPane1.setViewportView(logArea);
 
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(com.alphabot.websocket.client.terminal.WebSocketClientTerminalApp.class).getContext().getActionMap(WebSocketClientTerminalView.class, this);
+        connectButton.setAction(actionMap.get("connectClick")); // NOI18N
         connectButton.setText(resourceMap.getString("connectButton.text")); // NOI18N
         connectButton.setName("connectButton"); // NOI18N
 
         messageField.setText(resourceMap.getString("messageField.text")); // NOI18N
         messageField.setName("messageField"); // NOI18N
 
+        messageButton.setAction(actionMap.get("sendClick")); // NOI18N
         messageButton.setText(resourceMap.getString("messageButton.text")); // NOI18N
         messageButton.setName("messageButton"); // NOI18N
 
@@ -185,7 +199,6 @@ public class WebSocketClientTerminalView extends FrameView {
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(com.alphabot.websocket.client.terminal.WebSocketClientTerminalApp.class).getContext().getActionMap(WebSocketClientTerminalView.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setName("exitMenuItem"); // NOI18N
         fileMenu.add(exitMenuItem);
@@ -242,6 +255,86 @@ public class WebSocketClientTerminalView extends FrameView {
         setMenuBar(menuBar);
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
+
+    @Action
+    public void connectClick() {
+        if (!connected) {
+        try {
+            URI url = new URI(addressField.getText());
+            WebSocket websocket = new WebSocketConnection(url);
+
+            // Register Event Handlers
+            websocket.setEventHandler(new WebSocketEventHandler() {
+
+                public void onOpen() {
+                    System.out.println("--open");
+                }
+
+                public void onMessage(WebSocketMessage message) {
+                    System.out.println("--received message: " + message.getText());
+                    writeLogEntry(message.getText());
+                }
+
+                public void onClose() {
+                    System.out.println("--close");
+                }
+            });
+
+            // Establish WebSocket Connection
+            websocket.connect();
+
+            connected = true;
+            changeUIState();
+            // Send UTF-8 Text
+            //websocket.send("hello world");
+
+            // Close WebSocket Connection
+            //websocket.close();
+        } catch (WebSocketException wse) {
+            wse.printStackTrace();
+        } catch (URISyntaxException use) {
+            use.printStackTrace();
+        }
+        
+        } else {
+            try {
+                websocket.close();
+                connected = false;
+                changeUIState();
+            } catch (WebSocketException ex) {
+                Logger.getLogger(WebSocketClientTerminalView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    
+        
+    }
+    
+    private void changeUIState() {
+        if (connected) {
+            connectButton.setText("Disconnect");
+            
+        } else {
+            connectButton.setText("Connect");
+            
+        }
+        
+    }
+    
+    private void writeLogEntry(String logMessage) {
+        logArea.append(logMessage + "\n");
+    }
+
+    @Action
+    public void sendClick() {
+        try {
+            websocket.send(messageField.getText());
+        } catch (WebSocketException ex) {
+            Logger.getLogger(WebSocketClientTerminalView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private WebSocket websocket;
+    private boolean connected;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField addressField;

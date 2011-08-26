@@ -83,6 +83,9 @@
         </Container>
         <Component class="javax.swing.JButton" name="connectButton">
           <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+              <action class="com.alphabot.websocket.client.terminal.WebSocketClientTerminalView" id="connectClick" methodName="connectClick"/>
+            </Property>
             <Property name="text" type="java.lang.String" resourceKey="connectButton.text"/>
             <Property name="name" type="java.lang.String" value="connectButton" noResource="true"/>
           </Properties>
@@ -95,6 +98,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="messageButton">
           <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+              <action class="com.alphabot.websocket.client.terminal.WebSocketClientTerminalView" id="sendClick" methodName="sendClick"/>
+            </Property>
             <Property name="text" type="java.lang.String" resourceKey="messageButton.text"/>
             <Property name="name" type="java.lang.String" value="messageButton" noResource="true"/>
           </Properties>
