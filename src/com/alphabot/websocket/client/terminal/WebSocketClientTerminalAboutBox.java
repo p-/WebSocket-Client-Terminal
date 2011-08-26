@@ -1,5 +1,6 @@
 /*
  * WebSocketClientTerminalAboutBox.java
+ * (c) 2011 Alphabot
  */
 
 package com.alphabot.websocket.client.terminal;

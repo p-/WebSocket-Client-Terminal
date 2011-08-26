@@ -1,5 +1,6 @@
 /*
  * WebSocketClientTerminalView.java
+ * (c) 2011 Alphabot
  */
 
 package com.alphabot.websocket.client.terminal;
@@ -261,7 +262,7 @@ public class WebSocketClientTerminalView extends FrameView {
         if (!connected) {
         try {
             URI url = new URI(addressField.getText());
-            WebSocket websocket = new WebSocketConnection(url);
+            websocket = new WebSocketConnection(url);
 
             // Register Event Handlers
             websocket.setEventHandler(new WebSocketEventHandler() {
@@ -327,7 +328,7 @@ public class WebSocketClientTerminalView extends FrameView {
     @Action
     public void sendClick() {
         try {
-            websocket.send(messageField.getText());
+            websocket.send(/*messageField.getText()*/ "hhh");
         } catch (WebSocketException ex) {
             Logger.getLogger(WebSocketClientTerminalView.class.getName()).log(Level.SEVERE, null, ex);
         }
