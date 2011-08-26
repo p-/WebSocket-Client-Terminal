@@ -101,6 +101,13 @@ public class WebSocketClientTerminalView extends FrameView {
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel();
+        addressText = new javax.swing.JLabel();
+        addressField = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        logArea = new javax.swing.JTextArea();
+        connectButton = new javax.swing.JButton();
+        messageField = new javax.swing.JTextField();
+        messageButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -114,20 +121,65 @@ public class WebSocketClientTerminalView extends FrameView {
 
         mainPanel.setName("mainPanel"); // NOI18N
 
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(com.alphabot.websocket.client.terminal.WebSocketClientTerminalApp.class).getContext().getResourceMap(WebSocketClientTerminalView.class);
+        addressText.setText(resourceMap.getString("addressText.text")); // NOI18N
+        addressText.setName("addressText"); // NOI18N
+
+        addressField.setText(resourceMap.getString("addressField.text")); // NOI18N
+        addressField.setName("addressField"); // NOI18N
+
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+        logArea.setColumns(20);
+        logArea.setRows(5);
+        logArea.setName("logArea"); // NOI18N
+        jScrollPane1.setViewportView(logArea);
+
+        connectButton.setText(resourceMap.getString("connectButton.text")); // NOI18N
+        connectButton.setName("connectButton"); // NOI18N
+
+        messageField.setText(resourceMap.getString("messageField.text")); // NOI18N
+        messageField.setName("messageField"); // NOI18N
+
+        messageButton.setText(resourceMap.getString("messageButton.text")); // NOI18N
+        messageButton.setName("messageButton"); // NOI18N
+
         org.jdesktop.layout.GroupLayout mainPanelLayout = new org.jdesktop.layout.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 400, Short.MAX_VALUE)
+            .add(mainPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(addressText)
+                .add(18, 18, 18)
+                .add(addressField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(connectButton))
+            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, mainPanelLayout.createSequentialGroup()
+                .add(messageField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(messageButton))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 252, Short.MAX_VALUE)
+            .add(mainPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(addressText)
+                    .add(addressField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(connectButton))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 140, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(messageField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(messageButton))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         menuBar.setName("menuBar"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(com.alphabot.websocket.client.terminal.WebSocketClientTerminalApp.class).getContext().getResourceMap(WebSocketClientTerminalView.class);
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
@@ -162,11 +214,11 @@ public class WebSocketClientTerminalView extends FrameView {
         statusPanel.setLayout(statusPanelLayout);
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(statusPanelSeparator, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .add(statusPanelSeparator, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
             .add(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(statusMessageLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 226, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 307, Short.MAX_VALUE)
                 .add(progressBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(statusAnimationLabel)
@@ -190,8 +242,15 @@ public class WebSocketClientTerminalView extends FrameView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField addressField;
+    private javax.swing.JLabel addressText;
+    private javax.swing.JButton connectButton;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea logArea;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JButton messageButton;
+    private javax.swing.JTextField messageField;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
