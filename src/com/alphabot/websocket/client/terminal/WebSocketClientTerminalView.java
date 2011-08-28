@@ -2,7 +2,6 @@
  * WebSocketClientTerminalView.java
  * (c) 2011 Alphabot
  */
-
 package com.alphabot.websocket.client.terminal;
 
 import java.util.logging.Level;
@@ -20,13 +19,14 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 // Refactor to other class
-import de.roderick.weberknecht.WebSocket;
-import de.roderick.weberknecht.WebSocketConnection;
-import de.roderick.weberknecht.WebSocketEventHandler;
-import de.roderick.weberknecht.WebSocketException;
-import de.roderick.weberknecht.WebSocketMessage;
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.jwebsocket.api.WebSocketClient;
+import org.jwebsocket.api.WebSocketClientEvent;
+import org.jwebsocket.api.WebSocketClientListener;
+import org.jwebsocket.api.WebSocketPacket;
+import org.jwebsocket.client.java.BaseWebSocket;
+import org.jwebsocket.kit.WebSocketException;
 
 /**
  * The application's main frame.
@@ -37,11 +37,13 @@ public class WebSocketClientTerminalView extends FrameView {
         super(app);
 
         initComponents();
+        logArea.setEditable(false);
 
         // status bar initialization - message timeout, idle icon and busy animation, etc
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
         messageTimer = new Timer(messageTimeout, new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 statusMessageLabel.setText("");
             }
@@ -52,6 +54,7 @@ public class WebSocketClientTerminalView extends FrameView {
             busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
         }
         busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
                 statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
@@ -64,6 +67,7 @@ public class WebSocketClientTerminalView extends FrameView {
         // connecting action tasks to status bar via TaskMonitor
         TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
         taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 String propertyName = evt.getPropertyName();
                 if ("started".equals(propertyName)) {
@@ -80,11 +84,11 @@ public class WebSocketClientTerminalView extends FrameView {
                     progressBar.setVisible(false);
                     progressBar.setValue(0);
                 } else if ("message".equals(propertyName)) {
-                    String text = (String)(evt.getNewValue());
+                    String text = (String) (evt.getNewValue());
                     statusMessageLabel.setText((text == null) ? "" : text);
                     messageTimer.restart();
                 } else if ("progress".equals(propertyName)) {
-                    int value = (Integer)(evt.getNewValue());
+                    int value = (Integer) (evt.getNewValue());
                     progressBar.setVisible(true);
                     progressBar.setIndeterminate(false);
                     progressBar.setValue(value);
@@ -122,6 +126,7 @@ public class WebSocketClientTerminalView extends FrameView {
         messageButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
+        clearLogMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
@@ -142,6 +147,7 @@ public class WebSocketClientTerminalView extends FrameView {
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
+        logArea.setBackground(resourceMap.getColor("logArea.background")); // NOI18N
         logArea.setColumns(20);
         logArea.setRows(5);
         logArea.setName("logArea"); // NOI18N
@@ -199,6 +205,11 @@ public class WebSocketClientTerminalView extends FrameView {
 
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
+
+        clearLogMenuItem.setAction(actionMap.get("clearLog")); // NOI18N
+        clearLogMenuItem.setText(resourceMap.getString("clearLogMenuItem.text")); // NOI18N
+        clearLogMenuItem.setName("clearLogMenuItem"); // NOI18N
+        fileMenu.add(clearLogMenuItem);
 
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setName("exitMenuItem"); // NOI18N
@@ -260,43 +271,41 @@ public class WebSocketClientTerminalView extends FrameView {
     @Action
     public void connectClick() {
         if (!connected) {
-        try {
-            URI url = new URI(addressField.getText());
-            websocket = new WebSocketConnection(url);
+            try {
+                //URI url = new URI(addressField.getText());
+                websocket = new BaseWebSocket();
+                websocket.open(addressField.getText());
 
-            // Register Event Handlers
-            websocket.setEventHandler(new WebSocketEventHandler() {
 
-                public void onOpen() {
-                    System.out.println("--open");
-                }
+                // Register Event Handlers
+                websocket.addListener(new WebSocketClientListener() {
 
-                public void onMessage(WebSocketMessage message) {
-                    System.out.println("--received message: " + message.getText());
-                    writeLogEntry(message.getText());
-                }
 
-                public void onClose() {
-                    System.out.println("--close");
-                }
-            });
+                    public void processOpened(WebSocketClientEvent wsce) {
+                        writeLogEntry("[open]");
+                    }
 
-            // Establish WebSocket Connection
-            websocket.connect();
+                    public void processPacket(WebSocketClientEvent wsce, WebSocketPacket wsp) {
+                        writeLogEntry("[I] " + wsp.getString());
+                    }
 
-            connected = true;
-            changeUIState();
-            // Send UTF-8 Text
-            //websocket.send("hello world");
+                    public void processClosed(WebSocketClientEvent wsce) {
+                        writeLogEntry("[close]");
+                        connected = false;
+                        changeUIState();
+                    }
+                });
 
-            // Close WebSocket Connection
-            //websocket.close();
-        } catch (WebSocketException wse) {
-            wse.printStackTrace();
-        } catch (URISyntaxException use) {
-            use.printStackTrace();
-        }
-        
+                // Establish WebSocket Connection
+
+                connected = true;
+                changeUIState();
+
+            } catch (WebSocketException wse) {
+                wse.printStackTrace();
+            }
+            
+
         } else {
             try {
                 websocket.close();
@@ -306,21 +315,33 @@ public class WebSocketClientTerminalView extends FrameView {
                 Logger.getLogger(WebSocketClientTerminalView.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    
-        
+
+
     }
-    
+
     private void changeUIState() {
         if (connected) {
             connectButton.setText("Disconnect");
-            
+            statusMessageLabel.setText("Connected");
+
+            if (!busyIconTimer.isRunning()) {
+                statusAnimationLabel.setIcon(busyIcons[0]);
+                busyIconIndex = 0;
+                busyIconTimer.start();
+            }
+
         } else {
             connectButton.setText("Connect");
-            
+            statusMessageLabel.setText("Not Connected");
+
+            if (busyIconTimer.isRunning()) {
+                busyIconTimer.stop();
+                statusAnimationLabel.setIcon(idleIcon);
+            }
         }
-        
+
     }
-    
+
     private void writeLogEntry(String logMessage) {
         logArea.append(logMessage + "\n");
     }
@@ -328,18 +349,25 @@ public class WebSocketClientTerminalView extends FrameView {
     @Action
     public void sendClick() {
         try {
-            websocket.send(/*messageField.getText()*/ "hhh");
+            websocket.send(messageField.getText(), "UTF-8");
+            writeLogEntry("[O] " + messageField.getText());
         } catch (WebSocketException ex) {
             Logger.getLogger(WebSocketClientTerminalView.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            messageField.setText("");
         }
     }
-    
-    private WebSocket websocket;
-    private boolean connected;
 
+    @Action
+    public void clearLog() {
+        logArea.setText("");
+    }
+    private WebSocketClient websocket;
+    private boolean connected;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField addressField;
     private javax.swing.JLabel addressText;
+    private javax.swing.JMenuItem clearLogMenuItem;
     private javax.swing.JButton connectButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea logArea;
@@ -352,12 +380,10 @@ public class WebSocketClientTerminalView extends FrameView {
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
     // End of variables declaration//GEN-END:variables
-
     private final Timer messageTimer;
     private final Timer busyIconTimer;
     private final Icon idleIcon;
     private final Icon[] busyIcons = new Icon[15];
     private int busyIconIndex = 0;
-
     private JDialog aboutBox;
 }
