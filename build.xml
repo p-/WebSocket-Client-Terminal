@@ -71,4 +71,20 @@
     nbproject/build-impl.xml file. 
 
     -->
+    <target name="-post-jar">
+        <jar jarfile="bin/WebSocketClientTerminal-x.x.jar">
+            <zipfileset src="${dist.jar}" excludes="META-INF/*" />
+            <zipfileset src="dist/lib/appframework-1.0.3.jar" excludes="META-INF/*" />
+            <zipfileset src="dist/lib/swing-worker-1.1.jar" excludes="META-INF/*" />
+            <zipfileset src="dist/lib/swing-layout-1.0.4.jar" excludes="META-INF/*" />
+            <zipfileset src="dist/lib/javolution-5.5.1.jar" excludes="META-INF/*" />
+            <zipfileset src="dist/lib/json-2-RELEASE65.jar" excludes="META-INF/*" />
+            <zipfileset src="dist/lib/jWebSocketClientAPI-1.0.jar" excludes="META-INF/*" />
+            <zipfileset src="dist/lib/jWebSocketCommon-1.0.jar" excludes="META-INF/*" />
+            <zipfileset src="dist/lib/jWebSocketJavaSEClient-1.0.jar" excludes="META-INF/*" />
+            <manifest>
+                <attribute name="Main-Class" value="com.alphabot.websocket.client.terminal.WebSocketClientTerminalApp"/>
+            </manifest>
+        </jar>
+    </target>
 </project>
