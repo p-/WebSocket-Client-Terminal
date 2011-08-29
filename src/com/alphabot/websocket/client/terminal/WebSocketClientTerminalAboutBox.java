@@ -110,7 +110,7 @@ public class WebSocketClientTerminalAboutBox extends javax.swing.JDialog {
                             .add(appVendorLabel)
                             .add(appHomepageLabel)))
                     .add(org.jdesktop.layout.GroupLayout.LEADING, appTitleLabel)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, appDescLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, appDescLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
                     .add(closeButton))
                 .addContainerGap())
         );

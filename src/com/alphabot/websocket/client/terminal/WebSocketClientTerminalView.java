@@ -31,14 +31,13 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 // Refactor to other class
+import de.roderick.weberknecht.WebSocket;
+import de.roderick.weberknecht.WebSocketConnection;
+import de.roderick.weberknecht.WebSocketEventHandler;
+import de.roderick.weberknecht.WebSocketException;
+import de.roderick.weberknecht.WebSocketMessage;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.jwebsocket.api.WebSocketClient;
-import org.jwebsocket.api.WebSocketClientEvent;
-import org.jwebsocket.api.WebSocketClientListener;
-import org.jwebsocket.api.WebSocketPacket;
-import org.jwebsocket.client.java.BaseWebSocket;
-import org.jwebsocket.kit.WebSocketException;
 
 /**
  * The application's main frame.
@@ -284,24 +283,22 @@ public class WebSocketClientTerminalView extends FrameView {
     public void connectClick() {
         if (!connected) {
             try {
-                //URI url = new URI(addressField.getText());
-                websocket = new BaseWebSocket();
-                websocket.open(addressField.getText());
+                URI url = new URI(addressField.getText());
+                websocket = new WebSocketConnection(url);
 
 
                 // Register Event Handlers
-                websocket.addListener(new WebSocketClientListener() {
+                websocket.setEventHandler(new WebSocketEventHandler() {
 
-
-                    public void processOpened(WebSocketClientEvent wsce) {
+                    public void onOpen() {
                         writeLogEntry("[open]");
                     }
 
-                    public void processPacket(WebSocketClientEvent wsce, WebSocketPacket wsp) {
-                        writeLogEntry("[I] " + wsp.getString());
+                    public void onMessage(WebSocketMessage wsm) {
+                        writeLogEntry("[I] " + wsm.getText());
                     }
 
-                    public void processClosed(WebSocketClientEvent wsce) {
+                    public void onClose() {
                         writeLogEntry("[close]");
                         connected = false;
                         changeUIState();
@@ -309,10 +306,13 @@ public class WebSocketClientTerminalView extends FrameView {
                 });
 
                 // Establish WebSocket Connection
+                websocket.connect();
 
                 connected = true;
                 changeUIState();
 
+            } catch (URISyntaxException use) {
+                use.printStackTrace();
             } catch (WebSocketException wse) {
                 wse.printStackTrace();
             }
@@ -323,8 +323,8 @@ public class WebSocketClientTerminalView extends FrameView {
                 websocket.close();
                 connected = false;
                 changeUIState();
-            } catch (WebSocketException ex) {
-                Logger.getLogger(WebSocketClientTerminalView.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (WebSocketException wse) {
+                wse.printStackTrace();
             }
         }
 
@@ -361,10 +361,10 @@ public class WebSocketClientTerminalView extends FrameView {
     @Action
     public void sendClick() {
         try {
-            websocket.send(messageField.getText(), "UTF-8");
+            websocket.send(messageField.getText());
             writeLogEntry("[O] " + messageField.getText());
-        } catch (WebSocketException ex) {
-            Logger.getLogger(WebSocketClientTerminalView.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (WebSocketException wse) {
+            wse.printStackTrace();
         } finally {
             messageField.setText("");
         }
@@ -374,7 +374,7 @@ public class WebSocketClientTerminalView extends FrameView {
     public void clearLog() {
         logArea.setText("");
     }
-    private WebSocketClient websocket;
+    private WebSocket websocket;
     private boolean connected;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField addressField;

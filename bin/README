@@ -2,7 +2,7 @@ WebSocket Client Terminal
 =========================
 
 [Description]
-A graphical WebSocket Client written in Java, uses jWebSocket 1.0 as communication library.
+A graphical WebSocket Client written in Java, uses weberknecht as communication library.
 
 
 [Running]
