@@ -138,6 +138,8 @@ public class WebSocketClientTerminalView extends FrameView {
         messageButton = new javax.swing.JButton();
         protocolLabel = new javax.swing.JLabel();
         protocolField = new javax.swing.JTextField();
+        originLabel = new javax.swing.JLabel();
+        originField = new javax.swing.JTextField();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         clearLogMenuItem = new javax.swing.JMenuItem();
@@ -185,6 +187,12 @@ public class WebSocketClientTerminalView extends FrameView {
         protocolField.setText(resourceMap.getString("protocolField.text")); // NOI18N
         protocolField.setName("protocolField"); // NOI18N
 
+        originLabel.setText(resourceMap.getString("originLabel.text")); // NOI18N
+        originLabel.setName("originLabel"); // NOI18N
+
+        originField.setText(resourceMap.getString("originField.text")); // NOI18N
+        originField.setName("originField"); // NOI18N
+
         org.jdesktop.layout.GroupLayout mainPanelLayout = new org.jdesktop.layout.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -206,7 +214,12 @@ public class WebSocketClientTerminalView extends FrameView {
                         .add(addressField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(connectButton))
-                    .add(protocolField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 204, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(mainPanelLayout.createSequentialGroup()
+                        .add(protocolField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 204, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(originLabel)
+                        .add(18, 18, 18)
+                        .add(originField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 204, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
             .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 698, Short.MAX_VALUE)
         );
@@ -221,7 +234,9 @@ public class WebSocketClientTerminalView extends FrameView {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(protocolLabel)
-                    .add(protocolField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(protocolField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(originLabel)
+                    .add(originField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -306,7 +321,11 @@ public class WebSocketClientTerminalView extends FrameView {
 				if (protocolName.isEmpty()) {
 					protocolName = null;
 				}
-                websocket = new WebSocket(url, protocolName);
+				String origin = originField.getText();
+				if (origin.isEmpty()) {
+					origin = null;
+				}
+                websocket = new WebSocket(url, protocolName, origin);
 
 
                 // Register Event Handlers
@@ -373,6 +392,7 @@ public class WebSocketClientTerminalView extends FrameView {
             statusMessageLabel.setText("Connected");
 			protocolField.setEnabled(false);
 			addressField.setEnabled(false);
+			originField.setEnabled(false);
 			messageField.setEnabled(true);
 			messageButton.setEnabled(true);
 
@@ -387,6 +407,7 @@ public class WebSocketClientTerminalView extends FrameView {
             statusMessageLabel.setText("Not Connected");
 			protocolField.setEnabled(true);
 			addressField.setEnabled(true);
+			originField.setEnabled(true);
 			messageField.setEnabled(false);
 			messageButton.setEnabled(false);
 
@@ -431,6 +452,8 @@ public class WebSocketClientTerminalView extends FrameView {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JButton messageButton;
     private javax.swing.JTextField messageField;
+    private javax.swing.JTextField originField;
+    private javax.swing.JLabel originLabel;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JTextField protocolField;
     private javax.swing.JLabel protocolLabel;

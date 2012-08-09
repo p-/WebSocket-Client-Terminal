@@ -30,7 +30,13 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="connectButton" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="protocolField" min="-2" pref="204" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="protocolField" min="-2" pref="204" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="originLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="originField" min="-2" pref="204" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -50,6 +56,8 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="protocolLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="protocolField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="originLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="originField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jScrollPane1" pref="206" max="32767" attributes="0"/>
@@ -129,6 +137,18 @@
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="protocolField.text"/>
             <Property name="name" type="java.lang.String" value="protocolField" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="originLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="originLabel.text"/>
+            <Property name="name" type="java.lang.String" value="originLabel" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="originField">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="originField.text"/>
+            <Property name="name" type="java.lang.String" value="originField" noResource="true"/>
           </Properties>
         </Component>
       </SubComponents>
