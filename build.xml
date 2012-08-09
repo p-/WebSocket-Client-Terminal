@@ -77,7 +77,8 @@
             <zipfileset src="dist/lib/appframework-1.0.3.jar" excludes="META-INF/*" />
             <zipfileset src="dist/lib/swing-worker-1.1.jar" excludes="META-INF/*" />
             <zipfileset src="dist/lib/swing-layout-1.0.4.jar" excludes="META-INF/*" />
-            <zipfileset src="dist/lib/weberknecht-0.1-fork.jar" excludes="META-INF/*" />
+            <zipfileset src="dist/lib/weberknecht-fork.jar" excludes="META-INF/*" />
+			<zipfileset src="dist/lib/commons-codec-1.6.jar" excludes="META-INF/*" />
             <manifest>
                 <attribute name="Main-Class" value="com.alphabot.websocket.client.terminal.WebSocketClientTerminalApp"/>
             </manifest>

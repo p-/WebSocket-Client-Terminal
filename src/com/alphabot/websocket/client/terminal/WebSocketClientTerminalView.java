@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License. 
  */
-   
 package com.alphabot.websocket.client.terminal;
 
 import java.util.logging.Level;
@@ -32,7 +31,6 @@ import javax.swing.JFrame;
 
 // Refactor to other class
 import de.roderick.weberknecht.WebSocket;
-import de.roderick.weberknecht.WebSocketConnection;
 import de.roderick.weberknecht.WebSocketEventHandler;
 import de.roderick.weberknecht.WebSocketException;
 import de.roderick.weberknecht.WebSocketMessage;
@@ -75,6 +73,9 @@ public class WebSocketClientTerminalView extends FrameView {
         statusAnimationLabel.setIcon(idleIcon);
         progressBar.setVisible(false);
 
+		messageField.setEnabled(false);
+		messageButton.setEnabled(false);
+			
         // connecting action tasks to status bar via TaskMonitor
         TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
         taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
@@ -135,6 +136,8 @@ public class WebSocketClientTerminalView extends FrameView {
         connectButton = new javax.swing.JButton();
         messageField = new javax.swing.JTextField();
         messageButton = new javax.swing.JButton();
+        protocolLabel = new javax.swing.JLabel();
+        protocolField = new javax.swing.JTextField();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         clearLogMenuItem = new javax.swing.JMenuItem();
@@ -176,23 +179,34 @@ public class WebSocketClientTerminalView extends FrameView {
         messageButton.setText(resourceMap.getString("messageButton.text")); // NOI18N
         messageButton.setName("messageButton"); // NOI18N
 
+        protocolLabel.setText(resourceMap.getString("protocolLabel.text")); // NOI18N
+        protocolLabel.setName("protocolLabel"); // NOI18N
+
+        protocolField.setText(resourceMap.getString("protocolField.text")); // NOI18N
+        protocolField.setName("protocolField"); // NOI18N
+
         org.jdesktop.layout.GroupLayout mainPanelLayout = new org.jdesktop.layout.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(mainPanelLayout.createSequentialGroup()
-                .add(9, 9, 9)
-                .add(addressText)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(addressField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 405, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(connectButton)
-                .addContainerGap(55, Short.MAX_VALUE))
             .add(org.jdesktop.layout.GroupLayout.TRAILING, mainPanelLayout.createSequentialGroup()
                 .add(18, 18, 18)
                 .add(messageField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(messageButton)
+                .addContainerGap())
+            .add(mainPanelLayout.createSequentialGroup()
+                .add(9, 9, 9)
+                .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(addressText)
+                    .add(protocolLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(mainPanelLayout.createSequentialGroup()
+                        .add(addressField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(connectButton))
+                    .add(protocolField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 204, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
             .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 698, Short.MAX_VALUE)
         );
@@ -205,7 +219,11 @@ public class WebSocketClientTerminalView extends FrameView {
                     .add(addressField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(connectButton))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(protocolLabel)
+                    .add(protocolField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(messageButton)
@@ -284,7 +302,11 @@ public class WebSocketClientTerminalView extends FrameView {
         if (!connected) {
             try {
                 URI url = new URI(addressField.getText());
-                websocket = new WebSocketConnection(url);
+				String protocolName = protocolField.getText();
+				if (protocolName.isEmpty()) {
+					protocolName = null;
+				}
+                websocket = new WebSocket(url, protocolName);
 
 
                 // Register Event Handlers
@@ -303,6 +325,14 @@ public class WebSocketClientTerminalView extends FrameView {
                         connected = false;
                         changeUIState();
                     }
+
+                    public void onPing() {
+                        writeLogEntry("[ping]");
+                    }
+
+                    public void onPong() {
+                        writeLogEntry("[pong]");
+                    }
                 });
 
                 // Establish WebSocket Connection
@@ -312,29 +342,39 @@ public class WebSocketClientTerminalView extends FrameView {
                 changeUIState();
 
             } catch (URISyntaxException use) {
+                writeLogEntry("[exception] " + use.getMessage());
                 use.printStackTrace();
             } catch (WebSocketException wse) {
+                writeLogEntry("[exception] " + wse.getMessage());
                 wse.printStackTrace();
             }
-            
+
 
         } else {
-            try {
-                websocket.close();
-                connected = false;
-                changeUIState();
-            } catch (WebSocketException wse) {
-                wse.printStackTrace();
-            }
+            disconnect();
         }
 
 
+    }
+
+    private void disconnect() {
+        try {
+            connected = false;
+            changeUIState();
+            websocket.close();
+        } catch (WebSocketException wse) {
+            wse.printStackTrace();
+        }
     }
 
     private void changeUIState() {
         if (connected) {
             connectButton.setText("Disconnect");
             statusMessageLabel.setText("Connected");
+			protocolField.setEnabled(false);
+			addressField.setEnabled(false);
+			messageField.setEnabled(true);
+			messageButton.setEnabled(true);
 
             if (!busyIconTimer.isRunning()) {
                 statusAnimationLabel.setIcon(busyIcons[0]);
@@ -345,6 +385,10 @@ public class WebSocketClientTerminalView extends FrameView {
         } else {
             connectButton.setText("Connect");
             statusMessageLabel.setText("Not Connected");
+			protocolField.setEnabled(true);
+			addressField.setEnabled(true);
+			messageField.setEnabled(false);
+			messageButton.setEnabled(false);
 
             if (busyIconTimer.isRunning()) {
                 busyIconTimer.stop();
@@ -388,6 +432,8 @@ public class WebSocketClientTerminalView extends FrameView {
     private javax.swing.JButton messageButton;
     private javax.swing.JTextField messageField;
     private javax.swing.JProgressBar progressBar;
+    private javax.swing.JTextField protocolField;
+    private javax.swing.JLabel protocolLabel;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;

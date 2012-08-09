@@ -10,20 +10,28 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                  <Component id="addressText" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="addressField" min="-2" pref="405" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="connectButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="55" max="32767" attributes="0"/>
-              </Group>
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   <Component id="messageField" pref="577" max="32767" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="messageButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="addressText" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="protocolLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Component id="addressField" pref="443" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="connectButton" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="protocolField" min="-2" pref="204" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
               <Component id="jScrollPane1" alignment="0" pref="698" max="32767" attributes="0"/>
@@ -39,7 +47,12 @@
                       <Component id="connectButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" pref="242" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="protocolLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="protocolField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" pref="206" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="messageButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -104,6 +117,18 @@
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="messageButton.text"/>
             <Property name="name" type="java.lang.String" value="messageButton" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="protocolLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="protocolLabel.text"/>
+            <Property name="name" type="java.lang.String" value="protocolLabel" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="protocolField">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="protocolField.text"/>
+            <Property name="name" type="java.lang.String" value="protocolField" noResource="true"/>
           </Properties>
         </Component>
       </SubComponents>
