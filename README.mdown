@@ -1,14 +1,17 @@
 WebSocket Client Terminal
 =========================
 
-WebSocket Client Terminal is graphical WebSocket Client written in Java,
+WebSocket Client Terminal is graphical standalone WebSocket Client written in Java,
 that uses weberknecht as communication library.
 
-[![](https://s3-eu-west-1.amazonaws.com/filereleases/WebSocket-Client-Terminal/WebSocket_Client_Terminal_Screenshot.png)](https://s3-eu-west-1.amazonaws.com/filereleases/WebSocket-Client-Terminal/WebSocket_Client_Terminal_Screenshot.png)
+
+[![](https://s3-eu-west-1.amazonaws.com/filereleases/WebSocket-Client-Terminal/WebSocket_Client_Terminal_Screenshot_0.9.png)](https://s3-eu-west-1.amazonaws.com/filereleases/WebSocket-Client-Terminal/WebSocket_Client_Terminal_Screenshot_0.9.png)
 
 
 Running
 =======
+
+Works on Mac OS X, Linux and Windows with an installed Java Runtime Environment (JRE).
 
 Either double-click on WebSocketClientTerminal-x.x.jar
 
