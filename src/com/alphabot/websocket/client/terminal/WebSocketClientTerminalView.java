@@ -15,8 +15,6 @@
  */
 package com.alphabot.websocket.client.terminal;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -36,6 +34,8 @@ import de.roderick.weberknecht.WebSocketException;
 import de.roderick.weberknecht.WebSocketMessage;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedHashMap;
+import javax.swing.JOptionPane;
 
 /**
  * The application's main frame.
@@ -75,6 +75,8 @@ public class WebSocketClientTerminalView extends FrameView {
 
 		messageField.setEnabled(false);
 		messageButton.setEnabled(false);
+		
+		this.getRootPane().setDefaultButton(messageButton);
 			
         // connecting action tasks to status bar via TaskMonitor
         TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
@@ -321,11 +323,12 @@ public class WebSocketClientTerminalView extends FrameView {
 				if (protocolName.isEmpty()) {
 					protocolName = null;
 				}
-				String origin = originField.getText();
-				if (origin.isEmpty()) {
-					origin = null;
-				}
-                websocket = new WebSocket(url, protocolName, origin);
+				LinkedHashMap<String, String> extraHeaders = null;
+				if (!originField.getText().isEmpty()) {
+					extraHeaders = new LinkedHashMap<String, String>();
+					extraHeaders.put("Origin", originField.getText());
+				} 
+                websocket = new WebSocket(url, protocolName, extraHeaders);
 
 
                 // Register Event Handlers
@@ -336,7 +339,7 @@ public class WebSocketClientTerminalView extends FrameView {
                     }
 
                     public void onMessage(WebSocketMessage wsm) {
-                        writeLogEntry("[I] " + wsm.getText());
+                        writeLogEntry(wsm.getText());
                     }
 
                     public void onClose() {
@@ -361,19 +364,15 @@ public class WebSocketClientTerminalView extends FrameView {
                 changeUIState();
 
             } catch (URISyntaxException use) {
-                writeLogEntry("[exception] " + use.getMessage());
+				displayErrorMessage(use.getMessage());
                 use.printStackTrace();
             } catch (WebSocketException wse) {
-                writeLogEntry("[exception] " + wse.getMessage());
+				displayErrorMessage(wse.getMessage());
                 wse.printStackTrace();
             }
-
-
         } else {
             disconnect();
         }
-
-
     }
 
     private void disconnect() {
@@ -382,6 +381,7 @@ public class WebSocketClientTerminalView extends FrameView {
             changeUIState();
             websocket.close();
         } catch (WebSocketException wse) {
+			displayErrorMessage(wse.getMessage());
             wse.printStackTrace();
         }
     }
@@ -395,6 +395,7 @@ public class WebSocketClientTerminalView extends FrameView {
 			originField.setEnabled(false);
 			messageField.setEnabled(true);
 			messageButton.setEnabled(true);
+			messageField.requestFocus();
 
             if (!busyIconTimer.isRunning()) {
                 statusAnimationLabel.setIcon(busyIcons[0]);
@@ -422,16 +423,22 @@ public class WebSocketClientTerminalView extends FrameView {
     private void writeLogEntry(String logMessage) {
         logArea.append(logMessage + "\n");
     }
+	
+	private void displayErrorMessage(String errorMessage) {
+		JOptionPane.showMessageDialog(new JFrame(), errorMessage,"Error", JOptionPane.ERROR_MESSAGE);
+	}
 
     @Action
     public void sendClick() {
         try {
             websocket.send(messageField.getText());
-            writeLogEntry("[O] " + messageField.getText());
+            writeLogEntry(messageField.getText());
         } catch (WebSocketException wse) {
+			displayErrorMessage(wse.getMessage());
             wse.printStackTrace();
         } finally {
             messageField.setText("");
+			messageField.requestFocus();
         }
     }
 
@@ -439,6 +446,7 @@ public class WebSocketClientTerminalView extends FrameView {
     public void clearLog() {
         logArea.setText("");
     }
+	
     private WebSocket websocket;
     private boolean connected;
     // Variables declaration - do not modify//GEN-BEGIN:variables
